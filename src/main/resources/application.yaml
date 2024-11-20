@@ -21,3 +21,19 @@ mybatis-plus:
     db-config:
       id-type: auto
       update-strategy: not_null
+
+knife4j:
+  enable: true
+  openapi:
+    title: 用户管理接口文档
+    version: v1.0.0
+    description: 用户管理接口文档
+    license: Apache 2.0
+    url: https://github.com/dby321
+    group:
+      default:
+        group-name: 默认分组
+        api-rule: package
+        api-rule-resources:
+          - com.itheima.mp.controller
+    concat: dby321
