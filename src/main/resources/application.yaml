@@ -4,6 +4,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: rootroot
+  rabbitmq:
+    host: 127.0.0.1 # 你的虚拟机IP
+    port: 5672 # 端口
+    virtual-host: /hmall # 虚拟主机
+    username: mall # 用户名
+    password: mall # 密码
+    listener:
+      simple:
+        prefetch: 1 # 每次只能获取一条消息，处理完成才能获取下一个消息
 logging:
   level:
     com.itheima: debug
@@ -37,3 +46,4 @@ knife4j:
         api-rule-resources:
           - com.itheima.mp.controller
     concat: dby321
+
