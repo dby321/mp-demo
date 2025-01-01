@@ -13,7 +13,7 @@ public class DirectConfig {
      */
     @Bean
     public DirectExchange directExchange(){
-        return ExchangeBuilder.directExchange("hmall.direct").build();
+        return ExchangeBuilder.directExchange("hmall.direct").durable(true).build();
     }
 
     /**
@@ -21,7 +21,7 @@ public class DirectConfig {
      */
     @Bean
     public Queue directQueue1(){
-        return new Queue("direct.queue1");
+        return new Queue("direct.queue1",true);
     }
 
     /**

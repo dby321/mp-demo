@@ -1,11 +1,16 @@
 package com.itheima.mp.consumer;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.Argument;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
 import java.util.Map;
 
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
+@Slf4j
 @Component
 public class SpringRabbitListener {
 	// 利用RabbitListener来声明要监听的队列信息
@@ -60,5 +65,14 @@ public class SpringRabbitListener {
     @RabbitListener(queues = "object.queue")
     public void listenSimpleQueueMessage(Map<String, Object> msg) throws InterruptedException {
         System.out.println("消费者接收到object.queue消息：【" + msg + "】");
+    }
+
+    @RabbitListener(queuesToDeclare = @Queue(
+            name = "lazy.queue",
+            durable = "true",
+            arguments = @Argument(name = "x-queue-mode", value = "lazy")
+    ))
+    public void listenLazyQueue(String msg){
+        log.info("接收到 lazy.queue的消息：{}", msg);
     }
 }

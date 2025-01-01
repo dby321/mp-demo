@@ -1,10 +1,16 @@
 package com.itheima.mp;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,8 +71,13 @@ public class SpringAmqpTest {
         String exchangeName = "hmall.topic";
         // 消息
         String message = "喜报！孙悟空大战哥斯拉，胜!";
+        Message message1=new Message(message.getBytes(StandardCharsets.UTF_8));
+        MessageProperties messageProperties = message1.getMessageProperties();
+        System.out.println(messageProperties.getDeliveryMode());
+        messageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
         // 发送消息
-        rabbitTemplate.convertAndSend(exchangeName, "china.news", message);
+//        rabbitTemplate.convertAndSend(exchangeName, "china.news", message);
+        rabbitTemplate.send(exchangeName, "china.news", message1);
     }
 
     @Test
@@ -77,5 +88,20 @@ public class SpringAmqpTest {
         msg.put("age", 21);
         // 发送消息
         rabbitTemplate.convertAndSend("object.queue", msg);
+    }
+
+    @Test
+    void testPublisherDelayMessage() {
+        // 1.创建消息
+        String message = "hello, delayed message";
+        // 2.发送消息，利用消息后置处理器添加消息头
+        rabbitTemplate.convertAndSend("delay.direct", "delay", message, new MessagePostProcessor() {
+            @Override
+            public Message postProcessMessage(Message message) throws AmqpException {
+                // 添加延迟消息属性
+                message.getMessageProperties().setDelay(5000);
+                return message;
+            }
+        });
     }
 }
